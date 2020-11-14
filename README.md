@@ -1,6 +1,6 @@
 # Learning WebGL
 
-#####Lecture 1
+##### Lecture 1
 - Use standard template for html file
 - Create a main.js and embed it as a script in html
 - For webserver install
@@ -8,7 +8,7 @@
 - For running webserver
 ```node server.js```
 
-#####Lecture 2
+##### Lecture 2
 - WebGL uses Right handed coordinate system
 	- x: right
 	- y: top
@@ -22,7 +22,7 @@
 
 - Uniforms: Global variables for the CPU to communicate with Shader programs
 
-#####Lecture 3
+##### Lecture 3
 - Outline of program
 	- vertexData = [...]
 	- create Buffer
