@@ -5,17 +5,80 @@ if (!gl) {
     throw new Error('WebGL not supported');
 }
 
+// const vertexData = [
+//     0, 1, 0,    // V1.position
+//     1, -1, 0,   // V2.position
+//     -1, -1, 0,  // V3.position
+// ];
+
 const vertexData = [
-    0, 1, 0,    // V1.position
-    1, -1, 0,   // V2.position
-    -1, -1, 0,  // V3.position
+
+    // Front
+    0.5, 0.5, 0.5,
+    0.5, -.5, 0.5,
+    -.5, 0.5, 0.5,
+    -.5, 0.5, 0.5,
+    0.5, -.5, 0.5,
+    -.5, -.5, 0.5,
+
+    // Left
+    -.5, 0.5, 0.5,
+    -.5, -.5, 0.5,
+    -.5, 0.5, -.5,
+    -.5, 0.5, -.5,
+    -.5, -.5, 0.5,
+    -.5, -.5, -.5,
+
+    // Back
+    -.5, 0.5, -.5,
+    -.5, -.5, -.5,
+    0.5, 0.5, -.5,
+    0.5, 0.5, -.5,
+    -.5, -.5, -.5,
+    0.5, -.5, -.5,
+
+    // Right
+    0.5, 0.5, -.5,
+    0.5, -.5, -.5,
+    0.5, 0.5, 0.5,
+    0.5, 0.5, 0.5,
+    0.5, -.5, 0.5,
+    0.5, -.5, -.5,
+
+    // Top
+    0.5, 0.5, 0.5,
+    0.5, 0.5, -.5,
+    -.5, 0.5, 0.5,
+    -.5, 0.5, 0.5,
+    0.5, 0.5, -.5,
+    -.5, 0.5, -.5,
+
+    // Bottom
+    0.5, -.5, 0.5,
+    0.5, -.5, -.5,
+    -.5, -.5, 0.5,
+    -.5, -.5, 0.5,
+    0.5, -.5, -.5,
+    -.5, -.5, -.5,
 ];
 
-const colorData = [
-    1, 0, 0,    // V1.color
-    0, 1, 0,    // V2.color
-    0, 0, 1,    // V3.color
-];
+function randomColor() {
+    return [Math.random(), Math.random(), Math.random()];
+}
+
+// let colorData = [
+//     ...randomColor(),
+//     ...randomColor(),
+//     ...randomColor(),
+// ]
+
+let colorData = [];
+for (let face = 0 ; face < 6 ; face++) {
+    let faceColor = randomColor();
+    for (let vertex = 0 ; vertex < 6 ; vertex++) {
+        colorData.push(...faceColor);
+    }
+}
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
@@ -72,22 +135,33 @@ gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
 gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
 
 gl.useProgram(program);
+gl.enable(gl.DEPTH_TEST);
 
 const uniformLocations = {
     matrix: gl.getUniformLocation(program, `matrix`),
 };
 
-
 const matrix = mat4.create();
-mat4.translate(matrix, matrix, [.2, .5, 0]);
-mat4.scale(matrix, matrix, [0.25, 0.25, 0.25]);
+const projMatrix = mat4.create();
+mat4.perspective(projMatrix, 
+    75 * Math.PI/180., 
+    canvas.width/canvas.height, 
+    1e-4,
+    1e4
+);
+
+const finalMatrix = mat4.create();
+
+mat4.translate(matrix, matrix, [.2, .5, -2]);
+// mat4.scale(matrix, matrix, [0.25, 0.25, 0.25]);
 
 function animate() {
     requestAnimationFrame(animate);
     mat4.rotateZ(matrix, matrix, Math.PI/2 / 70);
-    gl.uniformMatrix4fv(uniformLocations.matrix, false, matrix);
-    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    mat4.rotateX(matrix, matrix, Math.PI/2 / 70);
+    mat4.multiply(finalMatrix, projMatrix, matrix);
+    gl.uniformMatrix4fv(uniformLocations.matrix, false, finalMatrix);
+    gl.drawArrays(gl.TRIANGLES, 0, vertexData.length/3);
 }
 
 animate();
-

@@ -56,4 +56,16 @@
 - GL shader language can use * for multiplication
 - ```getUniformLocation``` needs to be run after useProgram
 - The transformations applied to the matrix are replayed on the vertex in the reverse order as in the code.
+
+##### Lecture 6
+- 3 overlapping vertices: More vertices than required for colours
+- GL draws in chronological order. The lowest ones gets drawn last
+- Solution: Test depth. One that's closest to the camera gets drawn last.
+
+##### Lecture 7
+- ```mat4.perspective``` parameters:
+	- Vertical FOV
+	- Aspect Ratio
+	- Near cull distance
+	- Far cull distance
 - 
