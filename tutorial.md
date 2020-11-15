@@ -51,5 +51,9 @@
 - Need to set precision in fragmentShader, doesn't work otherwise.
 - Mobile phones might not support high precision float.
 
-
-
+##### Lecture 5
+- For some reason, if I try to run the glmatrix stuff at the top of the program, it doesn't print anything on the canvas
+- GL shader language can use * for multiplication
+- ```getUniformLocation``` needs to be run after useProgram
+- The transformations applied to the matrix are replayed on the vertex in the reverse order as in the code.
+- 
