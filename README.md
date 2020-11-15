@@ -68,4 +68,12 @@
 	- Aspect Ratio
 	- Near cull distance
 	- Far cull distance
-- 
+- ``` mat4.multiply(finalMatrix, projMatrix, matrix)``` means ```finalMatrix = projMatrix * matrix```
+- Aspect ratio defined by canvas width, reload page to make changes
+
+##### Lecture 8 
+- Camera never moves, move the object around to simulate camera motion
+![](imgs/20201115-061627.png)
+- ```mvpMatrix = projMatrix * viewMatrix * modelMatrix```
+
+##### Lecture 9
