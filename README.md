@@ -42,3 +42,18 @@
 - All attributes start off as disabled, need to enable.
 - ```vertexAttribPointer``` arguments : how many data pts at a time, and of what type
 - gl_Position and gl_FragColor are case sensitive
+
+##### Lecture 4
+- Generic attributes: Serve as connections b/w named attribs and buffers
+![](imgs/20201115-032953.png)
+- Binding between the generic attribute and the named attribute in the shader happens automatically.
+- Best practice: call ```getAttribLocation``` to get the location instead of hardcode
+- Need to set precision in fragmentShader, doesn't work otherwise.
+- Mobile phones might not support high precision float.
+
+##### Lecture 5
+- For some reason, if I try to run the glmatrix stuff at the top of the program, it doesn't print anything on the canvas
+- GL shader language can use * for multiplication
+- ```getUniformLocation``` needs to be run after useProgram
+- The transformations applied to the matrix are replayed on the vertex in the reverse order as in the code.
+- 
