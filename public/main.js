@@ -11,95 +11,38 @@ if (!gl) {
 //     -1, -1, 0,  // V3.position
 // ];
 
-const vertexData = [
+function spherePointCloud(pointCount) {
+    let points = [];
+    for (let i = 0; i < pointCount; i++) {
+        const r = () => Math.random() - 0.5; // -.5 < x < 0.5
+        const inputPoint = [r(), r(), r()];
+        
+        const outputPoint = vec3.normalize(vec3.create(), inputPoint);
 
-    // Front
-    0.5, 0.5, 0.5,
-    0.5, -.5, 0.5,
-    -.5, 0.5, 0.5,
-    -.5, 0.5, 0.5,
-    0.5, -.5, 0.5,
-    -.5, -.5, 0.5,
-
-    // Left
-    -.5, 0.5, 0.5,
-    -.5, -.5, 0.5,
-    -.5, 0.5, -.5,
-    -.5, 0.5, -.5,
-    -.5, -.5, 0.5,
-    -.5, -.5, -.5,
-
-    // Back
-    -.5, 0.5, -.5,
-    -.5, -.5, -.5,
-    0.5, 0.5, -.5,
-    0.5, 0.5, -.5,
-    -.5, -.5, -.5,
-    0.5, -.5, -.5,
-
-    // Right
-    0.5, 0.5, -.5,
-    0.5, -.5, -.5,
-    0.5, 0.5, 0.5,
-    0.5, 0.5, 0.5,
-    0.5, -.5, 0.5,
-    0.5, -.5, -.5,
-
-    // Top
-    0.5, 0.5, 0.5,
-    0.5, 0.5, -.5,
-    -.5, 0.5, 0.5,
-    -.5, 0.5, 0.5,
-    0.5, 0.5, -.5,
-    -.5, 0.5, -.5,
-
-    // Bottom
-    0.5, -.5, 0.5,
-    0.5, -.5, -.5,
-    -.5, -.5, 0.5,
-    -.5, -.5, 0.5,
-    0.5, -.5, -.5,
-    -.5, -.5, -.5,
-];
-
-function randomColor() {
-    return [Math.random(), Math.random(), Math.random()];
-}
-
-// let colorData = [
-//     ...randomColor(),
-//     ...randomColor(),
-//     ...randomColor(),
-// ]
-
-let colorData = [];
-for (let face = 0 ; face < 6 ; face++) {
-    let faceColor = randomColor();
-    for (let vertex = 0 ; vertex < 6 ; vertex++) {
-        colorData.push(...faceColor);
+        points.push(...outputPoint);
+        
     }
+
+    return points;
 }
+
+const vertexData = spherePointCloud(1e3);
 
 const positionBuffer = gl.createBuffer();
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertexData), gl.STATIC_DRAW);
-
-const colorBuffer = gl.createBuffer();
-gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colorData), gl.STATIC_DRAW);
 
 const vertexShader = gl.createShader(gl.VERTEX_SHADER);
 gl.shaderSource(vertexShader, `
 precision mediump float;
 
 attribute vec3 position;
-attribute vec3 color;
 varying vec3 vColor;
 
 uniform mat4 matrix;
 
 void main() {
-    vColor = color;
+    vColor = vec3(position.xy, 1);
     gl_Position = matrix * vec4(position, 1);
 }
 `);
@@ -129,11 +72,6 @@ gl.enableVertexAttribArray(positionLocation);
 gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
 gl.vertexAttribPointer(positionLocation, 3, gl.FLOAT, false, 0, 0);
 
-const colorLocation = gl.getAttribLocation(program, `color`);
-gl.enableVertexAttribArray(colorLocation);
-gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-gl.vertexAttribPointer(colorLocation, 3, gl.FLOAT, false, 0, 0);
-
 gl.useProgram(program);
 gl.enable(gl.DEPTH_TEST);
 
@@ -154,14 +92,13 @@ mat4.perspective(projMatrix,
 const mvMatrix = mat4.create();
 const mvpMatrix = mat4.create();
 
-mat4.translate(modelMatrix, modelMatrix, [.2, .5, -2]);
-mat4.translate(viewMatrix, viewMatrix, [3, 0, 1]);
+mat4.translate(modelMatrix, modelMatrix, [0, 0, 0]);
+mat4.translate(viewMatrix, viewMatrix, [0, 0.1, 2]);
 mat4.invert(viewMatrix, viewMatrix);
 
 function animate() {
     requestAnimationFrame(animate);
-    mat4.rotateZ(modelMatrix, modelMatrix, Math.PI/2 / 70);
-    mat4.rotateX(modelMatrix, modelMatrix, Math.PI/2 / 70);
+    mat4.rotateY(modelMatrix, modelMatrix, 0.03);
     mat4.multiply(mvMatrix, viewMatrix, modelMatrix);
     mat4.multiply(mvpMatrix, projMatrix, mvMatrix);
     gl.uniformMatrix4fv(uniformLocations.matrix, false, mvpMatrix);
